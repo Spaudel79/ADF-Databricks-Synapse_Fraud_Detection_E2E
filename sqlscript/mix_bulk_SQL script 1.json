@@ -1,0 +1,17 @@
+{
+	"name": "mix_bulk_SQL script 1",
+	"properties": {
+		"content": {
+			"query": "SELECT *\nFROM\n\n    OPENROWSET(\n\n        BULK 'https://sepstoragegenz.dfs.core.windows.net/synpase-storage/input/*.csv',\n        HEADER_ROW = TRUE,\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0'\n\n    )AS [result]; ",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

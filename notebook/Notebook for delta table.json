@@ -1,0 +1,109 @@
+{
+	"name": "Notebook for delta table",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "poolcluster",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "982cbe3c-835a-4d41-9ad5-2337936a70cd"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/6fc3294c-7a68-4df5-8ab3-4022a44dbc60/resourceGroups/SepresourceGroup/providers/Microsoft.Synapse/workspaces/sep-synapse-test/bigDataPools/poolcluster",
+				"name": "poolcluster",
+				"type": "Spark",
+				"endpoint": "https://sep-synapse-test.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/poolcluster",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net",
+					"authHeader": null
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\n",
+					"\n",
+					"CREATE TABLE CustomerDelta (\n",
+					"    id INT,\n",
+					"    name STRING,\n",
+					"    age INT\n",
+					")\n",
+					"USING DELTA\n",
+					"LOCATION 'abfss://customer-delta@sepstoragegenz.dfs.core.windows.net/input'\n",
+					""
+				],
+				"execution_count": 6
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\n",
+					"CREATE DATABASE IF NOT EXISTS mydb\n",
+					"COMMENT 'This is my first test database in Synapse Spark';\n",
+					""
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"data = [\n",
+					"    (4, \"Sita\", 22),\n",
+					"    (5, \"Ramesh\", 35),\n",
+					"    (6, \"Kiran\", 29)\n",
+					"]\n",
+					"columns = [\"id\", \"name\", \"age\"]\n",
+					"\n",
+					"df = spark.createDataFrame(data, columns)\n",
+					"\n",
+					"# Append into your existing Delta table\n",
+					"df.write.format(\"delta\").mode(\"append\").save(\"abfss://customer-delta@sepstoragegenz.dfs.core.windows.net/input\")"
+				],
+				"execution_count": 1
+			}
+		]
+	}
+}
