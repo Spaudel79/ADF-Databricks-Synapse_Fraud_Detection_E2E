@@ -1,0 +1,15 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "sep-synapse-test"
+		},
+		"sep-synapse-test-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:sep-synapse-test.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"sep-synapse-test-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net"
+		}
+	}
+}

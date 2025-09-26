@@ -1,0 +1,397 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "sep-synapse-test"
+		},
+		"sep-synapse-test-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sep-synapse-test-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:sep-synapse-test.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"sep-synapse-test-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/sep-synapse-test-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sep-synapse-test-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sep-synapse-test-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('sep-synapse-test-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Bulk_csv_SQL script_1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT *\nFROM\n\n    OPENROWSET(\n\n        BULK 'https://sepstoragegenz.dfs.core.windows.net/synpase-storage/input/CSVFILESONLY/*.csv',\n        HEADER_ROW = TRUE,\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0'\n\n    )AS [result]; ",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Final SQL script')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- =====================================================\n-- Azure Synapse Serverless SQL Pool - External Tables\n-- Complete Script for CSV, Parquet, and Delta formats\n-- =====================================================\n\n-- Step 1: Create Master Key (Required for credentials)\n-- Run this only once per database\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'YourStrongPassword123!';\n\n-- Step 2: Create External Data Source\nCREATE EXTERNAL DATA SOURCE externaldatasource\nWITH (\n    LOCATION = 'abfss://external-data-source@sepstoragegenz.dfs.core.windows.net'\n);\n\n-- =====================================================\n-- CSV FILE FORMAT AND EXTERNAL TABLE\n-- =====================================================\n\n-- Create External File Format for CSV\nCREATE EXTERNAL FILE FORMAT customerDataCSV\nWITH (\n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS (\n        FIELD_TERMINATOR = ',',\n        STRING_DELIMITER = '\"',\n        FIRST_ROW = 2,\n        ENCODING = 'UTF8',\n        PARSER_VERSION = '2.0'\n    )\n);\n\n-- Create External Table for CSV Data\nCREATE EXTERNAL TABLE dbo.CustomerDataCSV (\n    CustomerID INT,\n    FirstName NVARCHAR(50),\n    LastName NVARCHAR(50),\n    Email NVARCHAR(100),\n    PhoneNumber NVARCHAR(20),\n    Address NVARCHAR(200),\n    City NVARCHAR(50),\n    State NVARCHAR(50),\n    ZipCode NVARCHAR(10),\n    Country NVARCHAR(50),\n    DateCreated DATE,\n    IsActive BIT\n)\nWITH (\n    LOCATION = '/csv-data/',\n    DATA_SOURCE = externaldatasource,\n    FILE_FORMAT = customerDataCSV\n);\n\n-- =====================================================\n-- PARQUET FILE FORMAT AND EXTERNAL TABLE\n-- =====================================================\n\n-- Create External File Format for Parquet\nCREATE EXTERNAL FILE FORMAT customerDataParquet\nWITH (\n    FORMAT_TYPE = PARQUET\n);\n\n-- Create External Table for Parquet Data\nCREATE EXTERNAL TABLE dbo.CustomerDataParquet (\n    CustomerID INT,\n    FirstName NVARCHAR(50),\n    LastName NVARCHAR(50),\n    Email NVARCHAR(100),\n    PhoneNumber NVARCHAR(20),\n    Address NVARCHAR(200),\n    City NVARCHAR(50),\n    State NVARCHAR(50),\n    ZipCode NVARCHAR(10),\n    Country NVARCHAR(50),\n    DateCreated DATE,\n    IsActive BIT\n)\nWITH (\n    LOCATION = '/parquet-data/',\n    DATA_SOURCE = externaldatasource,\n    FILE_FORMAT = customerDataParquet\n);\n\n-- =====================================================\n-- DELTA FILE FORMAT AND EXTERNAL TABLE\n-- =====================================================\n\n-- Create External File Format for Delta\nCREATE EXTERNAL FILE FORMAT customerDataDelta\nWITH (\n    FORMAT_TYPE = DELTA\n);\n\n-- Create External Table for Delta Data\nCREATE EXTERNAL TABLE dbo.CustomerDataDelta (\n    CustomerID INT,\n    FirstName NVARCHAR(50),\n    LastName NVARCHAR(50),\n    Email NVARCHAR(100),\n    PhoneNumber NVARCHAR(20),\n    Address NVARCHAR(200),\n    City NVARCHAR(50),\n    State NVARCHAR(50),\n    ZipCode NVARCHAR(10),\n    Country NVARCHAR(50),\n    DateCreated DATE,\n    IsActive BIT\n)\nWITH (\n    LOCATION = '/delta-data/',\n    DATA_SOURCE = externaldatasource,\n    FILE_FORMAT = customerDataDelta\n);\n\n-- =====================================================\n-- TEST QUERIES\n-- =====================================================\n\n-- Test CSV External Table\nSELECT TOP 10 * \nFROM dbo.CustomerDataCSV\nORDER BY CustomerID;\n\n-- Test Parquet External Table\nSELECT TOP 10 * \nFROM dbo.CustomerDataParquet\nORDER BY CustomerID;\n\n-- Test Delta External Table\nSELECT TOP 10 * \nFROM dbo.CustomerDataDelta\nORDER BY CustomerID;\n\n-- Performance Comparison Query\nSELECT \n    'CSV' as FileFormat,\n    COUNT(*) as RecordCount,\n    COUNT(DISTINCT Country) as UniqueCountries\nFROM dbo.CustomerDataCSV\nUNION ALL\nSELECT \n    'Parquet' as FileFormat,\n    COUNT(*) as RecordCount,\n    COUNT(DISTINCT Country) as UniqueCountries\nFROM dbo.CustomerDataParquet\nUNION ALL\nSELECT \n    'Delta' as FileFormat,\n    COUNT(*) as RecordCount,\n    COUNT(DISTINCT Country) as UniqueCountries\nFROM dbo.CustomerDataDelta;\n\n-- =====================================================\n-- ALTERNATIVE: Using OPENROWSET for Quick Testing\n-- =====================================================\n\n-- Test CSV files directly without external table\nSELECT TOP 5 *\nFROM OPENROWSET(\n    BULK 'csv-data/*.csv',\n    DATA_SOURCE = 'externaldatasource',\n    FORMAT = 'CSV',\n    PARSER_VERSION = '2.0',\n    FIRSTROW = 2,\n    FIELDTERMINATOR = ',',\n    ROWTERMINATOR = '\\n'\n) AS [CSVData];\n\n-- Test Parquet files directly\nSELECT TOP 5 *\nFROM OPENROWSET(\n    BULK 'parquet-data/*.parquet',\n    DATA_SOURCE = 'externaldatasource',\n    FORMAT = 'PARQUET'\n) AS [ParquetData];\n\n-- Test Delta files directly\nSELECT TOP 5 *\nFROM OPENROWSET(\n    BULK 'delta-data/',\n    DATA_SOURCE = 'externaldatasource',\n    FORMAT = 'DELTA'\n) AS [DeltaData];\n\n-- =====================================================\n-- CLEANUP COMMANDS (Use with caution!)\n-- =====================================================\n\n/*\n-- Drop External Tables\nDROP EXTERNAL TABLE IF EXISTS dbo.CustomerDataCSV;\nDROP EXTERNAL TABLE IF EXISTS dbo.CustomerDataParquet;\nDROP EXTERNAL TABLE IF EXISTS dbo.CustomerDataDelta;\n\n-- Drop External File Formats\nDROP EXTERNAL FILE FORMAT IF EXISTS customerDataCSV;\nDROP EXTERNAL FILE FORMAT IF EXISTS customerDataParquet;\nDROP EXTERNAL FILE FORMAT IF EXISTS customerDataDelta;\n\n-- Drop External Data Source\nDROP EXTERNAL DATA SOURCE IF EXISTS externaldatasource;\n*/",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mydb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/New SQL script Ext Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Create External Data Source\nCREATE EXTERNAL DATA SOURCE externaldatasource\nWITH (\n    LOCATION = 'abfss://external-data-source@sepstoragegenz.dfs.core.windows.net'\n);\n\n-- Create External File Format\nCREATE EXTERNAL FILE FORMAT customerDataCSV\nWITH (\n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS (\n        FIELD_TERMINATOR = ',',\n        STRING_DELIMITER = '\"',\n        FIRST_ROW = 2,\n        ENCODING = 'UTF8',\n        PARSER_VERSION = '2.0'\n    )\n);\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mydb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script for external table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Create External Data Source\nCREATE EXTERNAL DATA SOURCE externaldatasource\nWITH (\n    LOCATION = 'abfss://external-data-source@sepstoragegenz.dfs.core.windows.net'\n);\n\n-- Create External File Format\nCREATE EXTERNAL FILE FORMAT customerDataCSV\nWITH (\n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS (\n        FIELD_TERMINATOR = ',',\n        STRING_DELIMITER = '\"',\n        FIRST_ROW = 2,\n        ENCODING = 'UTF8',\n        PARSER_VERSION = '2.0'\n    )\n);\n\n-- Create External Table\nCREATE EXTERNAL TABLE dbo.CustomerData\n(\n    CustomerID INT,\n    FirstName NVARCHAR(100),\n    LastName NVARCHAR(100),\n    Email NVARCHAR(200),\n    Phone NVARCHAR(50),\n    CreatedDate DATETIME2\n)\nWITH (\n    LOCATION = '/input/customers/',  -- folder or file path inside the container\n    DATA_SOURCE = externaldatasource,\n    FILE_FORMAT = customerDataCSV,\n    REJECT_TYPE = VALUE,\n    REJECT_VALUE = 0\n);\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "default",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/csv_test_SQL_script_1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://sepstoragegenz.dfs.core.windows.net/synpase-storage/input/departments.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/json_SQL_script')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT TOP 100\n    jsonContent\n/* --> place the keys that you see in JSON documents in the WITH clause:\n       , JSON_VALUE (jsonContent, '$.key1') AS header1\n       , JSON_VALUE (jsonContent, '$.key2') AS header2\n*/\nFROM\n    OPENROWSET(\n        BULK 'https://sepstoragegenz.dfs.core.windows.net/synpase-storage/input/customer_info.json',\n        FORMAT = 'CSV',\n        FIELDQUOTE = '0x0b',\n        FIELDTERMINATOR ='0x0b',\n        ROWTERMINATOR = '0x0b'\n    )\n    WITH (\n        jsonContent varchar(MAX)\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/mix_bulk_SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT *\nFROM\n\n    OPENROWSET(\n\n        BULK 'https://sepstoragegenz.dfs.core.windows.net/synpase-storage/input/*.csv',\n        HEADER_ROW = TRUE,\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0'\n\n    )AS [result]; ",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/parquet_SQL_script_1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://sepstoragegenz.dfs.core.windows.net/synpase-storage/input/bank_failures.parquet',\n        FORMAT = 'PARQUET'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Notebook for delta table')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "poolcluster",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"runAsWorkspaceSystemIdentity": false,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "982cbe3c-835a-4d41-9ad5-2337936a70cd"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"synapse_widget": {
+						"version": "0.1"
+					},
+					"enableDebugMode": false,
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/6fc3294c-7a68-4df5-8ab3-4022a44dbc60/resourceGroups/SepresourceGroup/providers/Microsoft.Synapse/workspaces/sep-synapse-test/bigDataPools/poolcluster",
+						"name": "poolcluster",
+						"type": "Spark",
+						"endpoint": "https://sep-synapse-test.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/poolcluster",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net",
+							"authHeader": null
+						},
+						"sparkVersion": "3.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "sparksql"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%sql\n",
+							"\n",
+							"CREATE TABLE CustomerDelta (\n",
+							"    id INT,\n",
+							"    name STRING,\n",
+							"    age INT\n",
+							")\n",
+							"USING DELTA\n",
+							"LOCATION 'abfss://customer-delta@sepstoragegenz.dfs.core.windows.net/input'\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "sparksql"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%sql\n",
+							"CREATE DATABASE IF NOT EXISTS mydb\n",
+							"COMMENT 'This is my first test database in Synapse Spark';\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"data = [\n",
+							"    (4, \"Sita\", 22),\n",
+							"    (5, \"Ramesh\", 35),\n",
+							"    (6, \"Kiran\", 29)\n",
+							"]\n",
+							"columns = [\"id\", \"name\", \"age\"]\n",
+							"\n",
+							"df = spark.createDataFrame(data, columns)\n",
+							"\n",
+							"# Append into your existing Delta table\n",
+							"df.write.format(\"delta\").mode(\"append\").save(\"abfss://customer-delta@sepstoragegenz.dfs.core.windows.net/input\")"
+						],
+						"outputs": [],
+						"execution_count": 1
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/poolcluster')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
+				},
+				"autoScale": {
+					"enabled": false,
+					"maxNodeCount": 3,
+					"minNodeCount": 3
+				},
+				"nodeCount": 3,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.4",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "southeastasia"
+		}
+	]
+}
