@@ -1,0 +1,17 @@
+{
+	"name": "warehousing script1",
+	"properties": {
+		"content": {
+			"query": "-- Create the schema if it doesn't exist\nIF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'wareschema')\nBEGIN\n    EXEC('CREATE SCHEMA wareschema');\nEND\nGO\n\n-- Create a physical (dedicated) table in the warehouse\nCREATE TABLE wareschema.fraudedwh\nWITH\n(\n    DISTRIBUTION = HASH(AccountID),      -- distribute based on AccountID\n    CLUSTERED COLUMNSTORE INDEX          -- optimized for analytics\n)\nAS\nSELECT *\nFROM newschema.frauded;  -- ✅ external table as data source\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "dedicatedtest",
+				"poolName": "dedicatedtest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

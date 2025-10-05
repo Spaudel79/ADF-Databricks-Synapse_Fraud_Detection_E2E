@@ -1,0 +1,17 @@
+{
+	"name": "dedicated script1",
+	"properties": {
+		"content": {
+			"query": "-- Dedicated SQL pool\n\nIF NOT EXISTS (\n    SELECT * FROM sys.schemas WHERE name = 'newschema'\n)\nBEGIN\n    EXEC('CREATE SCHEMA newschema');\nEND\nGO\n\nIF NOT EXISTS (SELECT * FROM sys.external_file_formats WHERE name = 'SynapseParquetFormat') \n\tCREATE EXTERNAL FILE FORMAT [SynapseParquetFormat] \n\tWITH ( FORMAT_TYPE = PARQUET)\nGO\n\nIF NOT EXISTS (SELECT * FROM sys.external_data_sources WHERE name = 'final-project-folder_sepstoragegenz_dfs_core_windows_net') \n\tCREATE EXTERNAL DATA SOURCE [final-project-folder_sepstoragegenz_dfs_core_windows_net] \n\tWITH (\n\t\tLOCATION = 'abfss://final-project-folder@sepstoragegenz.dfs.core.windows.net' \n\t)\nGO\n\nCREATE EXTERNAL TABLE newschema.frauded (\n\t[AccountID] nvarchar(4000),\n\t[TransactionID] nvarchar(4000),\n\t[TransactionAmount] float,\n\t[TransactionDate] date,\n\t[TransactionType] nvarchar(4000),\n\t[Location] nvarchar(4000),\n\t[DeviceID] float,\n\t[IP_Address] nvarchar(4000),\n\t[MerchantID] nvarchar(4000),\n\t[Channel] nvarchar(4000),\n\t[CustomerAge] int,\n\t[CustomerOccupation] nvarchar(4000),\n\t[TransactionDuration] int,\n\t[LoginAttempts] int,\n\t[AccountBalance] float,\n\t[PreviousTransactionDate] date,\n\t[Customer_ID] int,\n\t[Age] int,\n\t[Customer_Type] nvarchar(4000),\n\t[City] nvarchar(4000),\n\t[Region] nvarchar(4000),\n\t[Bank_Name] nvarchar(4000),\n\t[Branch_ID] int,\n\t[Fraud_Flag] nvarchar(4000)\n\t)\n\tWITH (\n\tLOCATION = 'silver/fraud_transcations/part-00000-8e396ce9-ba95-4b0d-afaa-9bb7d1c59c2e-c000.snappy.parquet',\n\tDATA_SOURCE = [final-project-folder_sepstoragegenz_dfs_core_windows_net],\n\tFILE_FORMAT = [SynapseParquetFormat]\n\t)\nGO\n\n\nSELECT TOP 10 * FROM newschema.frauded\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "dedicatedtest",
+				"poolName": "dedicatedtest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
