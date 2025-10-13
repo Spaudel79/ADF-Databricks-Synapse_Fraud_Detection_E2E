@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get_Api_Customer_Data",
-				"type": "WebActivity",
+				"name": "GIthubCopy",
+				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -15,9 +15,24 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"method": "GET",
-					"url": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customer_data.csv"
-				}
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "dataset_source_github",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"annotations": []

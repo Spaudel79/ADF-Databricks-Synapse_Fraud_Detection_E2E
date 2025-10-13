@@ -1,0 +1,21 @@
+{
+	"name": "dataset_source_github",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "github_source_linkedservice_customer",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
