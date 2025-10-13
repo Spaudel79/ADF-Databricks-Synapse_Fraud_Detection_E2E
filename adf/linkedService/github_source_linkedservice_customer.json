@@ -1,0 +1,12 @@
+{
+	"name": "github_source_linkedservice_customer",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customer_data.csv",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
