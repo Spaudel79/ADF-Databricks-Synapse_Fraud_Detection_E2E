@@ -9,21 +9,42 @@
 						"referenceName": "dataset_for_dataflow_customer",
 						"type": "DatasetReference"
 					},
-					"name": "customer_source"
+					"name": "customersource"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dataset_customer_sink_afterdataflow",
+						"type": "DatasetReference"
+					},
+					"name": "Customersink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
-				"          customer_id as integer,",
-				"          gender as string,",
-				"          age as integer,",
-				"          payment_method as string",
+				"          CustomerName as string,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          City as string,",
+				"          Country as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> customer_source"
+				"     ignoreNoFilesFound: false) ~> customersource",
+				"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country))) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Customersink"
 			]
 		}
 	}

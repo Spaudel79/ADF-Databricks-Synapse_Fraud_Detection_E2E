@@ -1,0 +1,23 @@
+{
+	"name": "dataset_customer_sink_afterdataflow",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linkedservice_customer_sink_afterdataflow",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "sink_customers",
+				"fileSystem": "bootcamp-project-1"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
