@@ -27,6 +27,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_customer'"
 		},
+		"linkedservice_for_dataflow_source_sales_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_source_sales'"
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_onprem_sales_source_after_dataflow'"
+		},
 		"linkedservice_onprem_source_sales_bootcamp_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'linkedservice_onprem_source_sales_bootcamp'"
@@ -38,6 +46,10 @@
 		"linkedservice_sink_customer_github_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_sink_customer_github'"
+		},
+		"linkedservice_sink_sales_after_dataflow_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_sink_sales_after_dataflow'"
 		},
 		"onprem_adls_source_final_linkedservice_accountKey": {
 			"type": "secureString",
@@ -83,6 +95,14 @@
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
+		"linkedservice_for_dataflow_source_sales_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
 		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "DESKTOP-UHTBC01"
@@ -100,6 +120,10 @@
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_sink_customer_github_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_sink_sales_after_dataflow_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
@@ -258,8 +282,6 @@
 					{
 						"name": "Data flow for Customers",
 						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -276,7 +298,9 @@
 								"parameters": {},
 								"datasetParameters": {
 									"customersource": {},
-									"Customersink": {}
+									"salessource": {},
+									"Customersink": {},
+									"salessink": {}
 								}
 							},
 							"staging": {},
@@ -645,6 +669,106 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dataset_for_dataflow_source_sales')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_for_dataflow_source_sales",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "dbo.sales_messy.txt",
+						"folderPath": "onPrem_sales",
+						"fileSystem": "bootcamp-project-1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "String"
+					},
+					{
+						"name": "ProductID",
+						"type": "String"
+					},
+					{
+						"name": "SaleDate",
+						"type": "String"
+					},
+					{
+						"name": "Quantity",
+						"type": "String"
+					},
+					{
+						"name": "TotalAmount",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_for_dataflow_source_sales')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_onprem_sales_source_after_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_onprem_sales_source_after_dataflow",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "dbo.sales_messy.txt",
+						"folderPath": "onPrem_sales",
+						"fileSystem": "bootcamp-project-1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "String"
+					},
+					{
+						"name": "ProductID",
+						"type": "String"
+					},
+					{
+						"name": "SaleDate",
+						"type": "String"
+					},
+					{
+						"name": "Quantity",
+						"type": "String"
+					},
+					{
+						"name": "TotalAmount",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_onprem_sales_source_after_dataflow')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataset_onprem_source_sales_bootcamp')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -744,6 +868,34 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/dataset_sink_products_bootcamp_onprem')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_sink_sales_after_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_sink_sales_after_dataflow",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "sink_sales",
+						"fileSystem": "bootcamp-project-1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_sink_sales_after_dataflow')]"
 			]
 		},
 		{
@@ -1023,6 +1175,40 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_for_dataflow_source_sales')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_for_dataflow_source_sales_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_for_dataflow_source_sales_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_onprem_sales_source_after_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_onprem_sales_source_after_dataflow_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/linkedservice_onprem_source_sales_bootcamp')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1079,6 +1265,23 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('linkedservice_sink_customer_github_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_sink_sales_after_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_sink_sales_after_dataflow_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_sink_sales_after_dataflow_accountKey')]"
 					}
 				}
 			},
@@ -1297,6 +1500,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "customersource"
+						},
+						{
+							"dataset": {
+								"referenceName": "dataset_onprem_sales_source_after_dataflow",
+								"type": "DatasetReference"
+							},
+							"name": "salessource"
 						}
 					],
 					"sinks": [
@@ -1306,11 +1516,21 @@
 								"type": "DatasetReference"
 							},
 							"name": "Customersink"
+						},
+						{
+							"dataset": {
+								"referenceName": "dataset_sink_sales_after_dataflow",
+								"type": "DatasetReference"
+							},
+							"name": "salessink"
 						}
 					],
 					"transformations": [
 						{
 							"name": "derivedColumn1"
+						},
+						{
+							"name": "derivedColumn2"
 						}
 					],
 					"scriptLines": [
@@ -1324,20 +1544,43 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> customersource",
+						"source(output(",
+						"          CustomerID as string,",
+						"          ProductID as string,",
+						"          SaleDate as string,",
+						"          Quantity as string,",
+						"          TotalAmount as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> salessource",
 						"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country))) ~> derivedColumn1",
+						"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
+						"          TotalAmount = round(toFloat(TotalAmount), 3),",
+						"          ProductID = iif(isNull(ProductID) || ProductID == '', toInteger(null()), toInteger(ProductID)),",
+						"          CustomerID = iif(isNull(CustomerID) || CustomerID == '', toInteger(null()), toInteger(CustomerID))) ~> derivedColumn2",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> Customersink"
+						"     skipDuplicateMapOutputs: true) ~> Customersink",
+						"derivedColumn2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> salessink"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_customer')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_customer_sink_afterdataflow')]"
+				"[concat(variables('factoryId'), '/datasets/dataset_onprem_sales_source_after_dataflow')]",
+				"[concat(variables('factoryId'), '/datasets/dataset_customer_sink_afterdataflow')]",
+				"[concat(variables('factoryId'), '/datasets/dataset_sink_sales_after_dataflow')]"
 			]
 		}
 	]

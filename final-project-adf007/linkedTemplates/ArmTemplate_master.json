@@ -27,6 +27,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_customer'"
 		},
+		"linkedservice_for_dataflow_source_sales_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_source_sales'"
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_onprem_sales_source_after_dataflow'"
+		},
 		"linkedservice_onprem_source_sales_bootcamp_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'linkedservice_onprem_source_sales_bootcamp'"
@@ -38,6 +46,10 @@
 		"linkedservice_sink_customer_github_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_sink_customer_github'"
+		},
+		"linkedservice_sink_sales_after_dataflow_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_sink_sales_after_dataflow'"
 		},
 		"onprem_adls_source_final_linkedservice_accountKey": {
 			"type": "secureString",
@@ -83,6 +95,14 @@
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
+		"linkedservice_for_dataflow_source_sales_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
 		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "DESKTOP-UHTBC01"
@@ -100,6 +120,10 @@
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_sink_customer_github_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_sink_sales_after_dataflow_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
@@ -173,11 +197,20 @@
 					"linkedservice_for_dataflow_customer_accountKey": {
 						"value": "[parameters('linkedservice_for_dataflow_customer_accountKey')]"
 					},
+					"linkedservice_for_dataflow_source_sales_accountKey": {
+						"value": "[parameters('linkedservice_for_dataflow_source_sales_accountKey')]"
+					},
+					"linkedservice_onprem_sales_source_after_dataflow_accountKey": {
+						"value": "[parameters('linkedservice_onprem_sales_source_after_dataflow_accountKey')]"
+					},
 					"linkedservice_sink_csv_from_github_accountKey": {
 						"value": "[parameters('linkedservice_sink_csv_from_github_accountKey')]"
 					},
 					"linkedservice_sink_customer_github_accountKey": {
 						"value": "[parameters('linkedservice_sink_customer_github_accountKey')]"
+					},
+					"linkedservice_sink_sales_after_dataflow_accountKey": {
+						"value": "[parameters('linkedservice_sink_sales_after_dataflow_accountKey')]"
 					},
 					"sink_adls_bronze_linkedservice_accountKey": {
 						"value": "[parameters('sink_adls_bronze_linkedservice_accountKey')]"
@@ -206,11 +239,20 @@
 					"linkedservice_for_dataflow_customer_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_for_dataflow_customer_properties_typeProperties_url')]"
 					},
+					"linkedservice_for_dataflow_source_sales_properties_typeProperties_url": {
+						"value": "[parameters('linkedservice_for_dataflow_source_sales_properties_typeProperties_url')]"
+					},
+					"linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url": {
+						"value": "[parameters('linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url')]"
+					},
 					"linkedservice_sink_csv_from_github_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_sink_csv_from_github_properties_typeProperties_url')]"
 					},
 					"linkedservice_sink_customer_github_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_sink_customer_github_properties_typeProperties_url')]"
+					},
+					"linkedservice_sink_sales_after_dataflow_properties_typeProperties_url": {
+						"value": "[parameters('linkedservice_sink_sales_after_dataflow_properties_typeProperties_url')]"
 					},
 					"sink_adls_bronze_linkedservice_properties_typeProperties_url": {
 						"value": "[parameters('sink_adls_bronze_linkedservice_properties_typeProperties_url')]"

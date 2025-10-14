@@ -27,6 +27,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_customer'"
 		},
+		"linkedservice_for_dataflow_source_sales_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_source_sales'"
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_onprem_sales_source_after_dataflow'"
+		},
 		"linkedservice_sink_csv_from_github_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_sink_csv_from_github'"
@@ -34,6 +42,10 @@
 		"linkedservice_sink_customer_github_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_sink_customer_github'"
+		},
+		"linkedservice_sink_sales_after_dataflow_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_sink_sales_after_dataflow'"
 		},
 		"sink_adls_bronze_linkedservice_accountKey": {
 			"type": "secureString",
@@ -71,11 +83,23 @@
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
+		"linkedservice_for_dataflow_source_sales_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
 		"linkedservice_sink_csv_from_github_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_sink_customer_github_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_sink_sales_after_dataflow_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
@@ -198,6 +222,40 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_for_dataflow_source_sales')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_for_dataflow_source_sales_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_for_dataflow_source_sales_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_onprem_sales_source_after_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_onprem_sales_source_after_dataflow_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/linkedservice_sink_csv_from_github')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -226,6 +284,23 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('linkedservice_sink_customer_github_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_sink_sales_after_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_sink_sales_after_dataflow_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_sink_sales_after_dataflow_accountKey')]"
 					}
 				}
 			},
@@ -493,12 +568,12 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dataset_sink_csv_from_github')]",
+			"name": "[concat(parameters('factoryName'), '/dataset_for_dataflow_source_sales')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "linkedservice_sink_csv_from_github",
+					"referenceName": "linkedservice_for_dataflow_source_sales",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -506,34 +581,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "github_customer",
-						"fileSystem": "bootcamp-project-1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_sink_csv_from_github')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataset_sink_products_bootcamp_onprem')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dataset_sink_products_bootcamp_onprem",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
+						"fileName": "dbo.sales_messy.txt",
 						"folderPath": "onPrem_sales",
 						"fileSystem": "bootcamp-project-1"
 					},
@@ -542,64 +590,31 @@
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dataset_sink_products_bootcamp_onprem')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataset_source_github')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "github_source_linkedservice_customer",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation"
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "String"
 					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/github_source_linkedservice_customer')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/sink_adls_bronze_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "sink_adls_bronze_linkedservice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "bronze",
-						"fileSystem": "final-project-folder"
+					{
+						"name": "ProductID",
+						"type": "String"
 					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
+					{
+						"name": "SaleDate",
+						"type": "String"
+					},
+					{
+						"name": "Quantity",
+						"type": "String"
+					},
+					{
+						"name": "TotalAmount",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/sink_adls_bronze_linkedservice')]"
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_for_dataflow_source_sales')]"
 			]
 		}
 	]

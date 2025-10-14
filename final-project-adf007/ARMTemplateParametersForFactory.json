@@ -20,6 +20,12 @@
 		"linkedservice_for_dataflow_customer_accountKey": {
 			"value": ""
 		},
+		"linkedservice_for_dataflow_source_sales_accountKey": {
+			"value": ""
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_accountKey": {
+			"value": ""
+		},
 		"linkedservice_onprem_source_sales_bootcamp_password": {
 			"value": ""
 		},
@@ -27,6 +33,9 @@
 			"value": ""
 		},
 		"linkedservice_sink_customer_github_accountKey": {
+			"value": ""
+		},
+		"linkedservice_sink_sales_after_dataflow_accountKey": {
 			"value": ""
 		},
 		"onprem_adls_source_final_linkedservice_accountKey": {
@@ -62,6 +71,12 @@
 		"linkedservice_for_dataflow_customer_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
+		"linkedservice_for_dataflow_source_sales_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_onprem_sales_source_after_dataflow_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
 		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server": {
 			"value": "DESKTOP-UHTBC01"
 		},
@@ -75,6 +90,9 @@
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_sink_customer_github_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_sink_sales_after_dataflow_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"onprem_adls_source_final_linkedservice_properties_typeProperties_url": {
