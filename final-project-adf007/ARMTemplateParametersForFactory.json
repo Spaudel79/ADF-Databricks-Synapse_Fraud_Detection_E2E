@@ -1,0 +1,102 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "final-project-adf007"
+		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
+		"dataflow_sink_dataset_accountKey": {
+			"value": ""
+		},
+		"dataset_sink_products_bootcamp_onprem_accountKey": {
+			"value": ""
+		},
+		"linkedservice_customer_sink_afterdataflow_accountKey": {
+			"value": ""
+		},
+		"linkedservice_for_dataflow_customer_accountKey": {
+			"value": ""
+		},
+		"linkedservice_onprem_source_sales_bootcamp_password": {
+			"value": ""
+		},
+		"linkedservice_sink_csv_from_github_accountKey": {
+			"value": ""
+		},
+		"linkedservice_sink_customer_github_accountKey": {
+			"value": ""
+		},
+		"onprem_adls_source_final_linkedservice_accountKey": {
+			"value": ""
+		},
+		"onprem_sqlserver_source_linkedservice_password": {
+			"value": ""
+		},
+		"sink_adls_bronze_linkedservice_accountKey": {
+			"value": ""
+		},
+		"sink_dataflow_linkeservice_accountKey": {
+			"value": ""
+		},
+		"source_dataflow_linkedservice_accountKey": {
+			"value": ""
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"value": "0928-154520-mbpda026"
+		},
+		"dataflow_sink_dataset_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"dataset_sink_products_bootcamp_onprem_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"github_source_linkedservice_customer_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customers_messy.csv"
+		},
+		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_for_dataflow_customer_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server": {
+			"value": "DESKTOP-UHTBC01"
+		},
+		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_database": {
+			"value": "bootcamp"
+		},
+		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_userName": {
+			"value": "newsqlserver"
+		},
+		"linkedservice_sink_csv_from_github_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_sink_customer_github_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"onprem_adls_source_final_linkedservice_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"onprem_sqlserver_source_linkedservice_properties_typeProperties_server": {
+			"value": "DESKTOP-UHTBC01"
+		},
+		"onprem_sqlserver_source_linkedservice_properties_typeProperties_database": {
+			"value": "customer"
+		},
+		"onprem_sqlserver_source_linkedservice_properties_typeProperties_userName": {
+			"value": "newsqlserver"
+		},
+		"sink_adls_bronze_linkedservice_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"sink_dataflow_linkeservice_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"source_dataflow_linkedservice_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		}
+	}
+}
