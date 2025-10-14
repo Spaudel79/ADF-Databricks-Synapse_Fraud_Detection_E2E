@@ -14,10 +14,16 @@
 		"dataset_sink_products_bootcamp_onprem_accountKey": {
 			"value": ""
 		},
+		"linkedservice_after_dataflow_sink_products_accountKey": {
+			"value": ""
+		},
 		"linkedservice_customer_sink_afterdataflow_accountKey": {
 			"value": ""
 		},
 		"linkedservice_for_dataflow_customer_accountKey": {
+			"value": ""
+		},
+		"linkedservice_for_dataflow_products_source_accountKey": {
 			"value": ""
 		},
 		"linkedservice_for_dataflow_source_sales_accountKey": {
@@ -65,10 +71,16 @@
 		"github_source_linkedservice_customer_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customers_messy.csv"
 		},
+		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
 		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_for_dataflow_customer_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_for_dataflow_products_source_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_for_dataflow_source_sales_properties_typeProperties_url": {

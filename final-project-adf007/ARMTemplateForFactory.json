@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'dataset_sink_products_bootcamp_onprem'"
 		},
+		"linkedservice_after_dataflow_sink_products_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_after_dataflow_sink_products'"
+		},
 		"linkedservice_customer_sink_afterdataflow_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_customer_sink_afterdataflow'"
@@ -26,6 +30,10 @@
 		"linkedservice_for_dataflow_customer_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_customer'"
+		},
+		"linkedservice_for_dataflow_products_source_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_products_source'"
 		},
 		"linkedservice_for_dataflow_source_sales_accountKey": {
 			"type": "secureString",
@@ -87,11 +95,19 @@
 			"type": "string",
 			"defaultValue": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customers_messy.csv"
 		},
+		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
 		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_for_dataflow_customer_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_for_dataflow_products_source_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
@@ -299,8 +315,10 @@
 								"datasetParameters": {
 									"customersource": {},
 									"salessource": {},
+									"productssource": {},
 									"Customersink": {},
-									"salessink": {}
+									"salessink": {},
+									"productssink": {}
 								}
 							},
 							"staging": {},
@@ -591,6 +609,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dataset_after_dataflow_sink_products')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_after_dataflow_sink_products",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "sink_products",
+						"fileSystem": "bootcamp-project-1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_after_dataflow_sink_products')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataset_customer_sink_afterdataflow')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -666,6 +712,52 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linkedservice_for_dataflow_customer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_for_dataflow_products_source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_for_dataflow_products_source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "products_messy.csv",
+						"folderPath": "adls_csv_products",
+						"fileSystem": "bootcamp-project-1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ProductName",
+						"type": "String"
+					},
+					{
+						"name": "Category",
+						"type": "String"
+					},
+					{
+						"name": "Price",
+						"type": "String"
+					},
+					{
+						"name": "StockQuantity",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_for_dataflow_products_source')]"
 			]
 		},
 		{
@@ -1141,6 +1233,23 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_after_dataflow_sink_products')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_after_dataflow_sink_products_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_after_dataflow_sink_products_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/linkedservice_customer_sink_afterdataflow')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1169,6 +1278,23 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('linkedservice_for_dataflow_customer_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_for_dataflow_products_source')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('linkedservice_for_dataflow_products_source_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_for_dataflow_products_source_accountKey')]"
 					}
 				}
 			},
@@ -1507,6 +1633,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "salessource"
+						},
+						{
+							"dataset": {
+								"referenceName": "dataset_for_dataflow_products_source",
+								"type": "DatasetReference"
+							},
+							"name": "productssource"
 						}
 					],
 					"sinks": [
@@ -1523,6 +1656,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "salessink"
+						},
+						{
+							"dataset": {
+								"referenceName": "dataset_after_dataflow_sink_products",
+								"type": "DatasetReference"
+							},
+							"name": "productssink"
 						}
 					],
 					"transformations": [
@@ -1531,6 +1671,9 @@
 						},
 						{
 							"name": "derivedColumn2"
+						},
+						{
+							"name": "derivedColumn3"
 						}
 					],
 					"scriptLines": [
@@ -1554,11 +1697,21 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> salessource",
+						"source(output(",
+						"          ProductName as string,",
+						"          Category as string,",
+						"          Price as string,",
+						"          StockQuantity as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> productssource",
 						"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country))) ~> derivedColumn1",
 						"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
 						"          TotalAmount = round(toFloat(TotalAmount), 3),",
 						"          ProductID = iif(isNull(ProductID) || ProductID == '', toInteger(null()), toInteger(ProductID)),",
 						"          CustomerID = iif(isNull(CustomerID) || CustomerID == '', toInteger(null()), toInteger(CustomerID))) ~> derivedColumn2",
+						"productssource derive(Category = upper(Category)) ~> derivedColumn3",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     umask: 0022,",
@@ -1572,15 +1725,24 @@
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> salessink"
+						"     skipDuplicateMapOutputs: true) ~> salessink",
+						"derivedColumn3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> productssink"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_customer')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_onprem_sales_source_after_dataflow')]",
+				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_products_source')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_customer_sink_afterdataflow')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_sink_sales_after_dataflow')]"
+				"[concat(variables('factoryId'), '/datasets/dataset_sink_sales_after_dataflow')]",
+				"[concat(variables('factoryId'), '/datasets/dataset_after_dataflow_sink_products')]"
 			]
 		}
 	]

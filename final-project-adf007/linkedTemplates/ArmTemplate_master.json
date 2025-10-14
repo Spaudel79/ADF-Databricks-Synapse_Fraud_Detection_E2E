@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'dataset_sink_products_bootcamp_onprem'"
 		},
+		"linkedservice_after_dataflow_sink_products_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_after_dataflow_sink_products'"
+		},
 		"linkedservice_customer_sink_afterdataflow_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_customer_sink_afterdataflow'"
@@ -26,6 +30,10 @@
 		"linkedservice_for_dataflow_customer_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_customer'"
+		},
+		"linkedservice_for_dataflow_products_source_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'linkedservice_for_dataflow_products_source'"
 		},
 		"linkedservice_for_dataflow_source_sales_accountKey": {
 			"type": "secureString",
@@ -87,11 +95,19 @@
 			"type": "string",
 			"defaultValue": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customers_messy.csv"
 		},
+		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
 		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_for_dataflow_customer_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_for_dataflow_products_source_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
@@ -191,11 +207,17 @@
 					"dataset_sink_products_bootcamp_onprem_accountKey": {
 						"value": "[parameters('dataset_sink_products_bootcamp_onprem_accountKey')]"
 					},
+					"linkedservice_after_dataflow_sink_products_accountKey": {
+						"value": "[parameters('linkedservice_after_dataflow_sink_products_accountKey')]"
+					},
 					"linkedservice_customer_sink_afterdataflow_accountKey": {
 						"value": "[parameters('linkedservice_customer_sink_afterdataflow_accountKey')]"
 					},
 					"linkedservice_for_dataflow_customer_accountKey": {
 						"value": "[parameters('linkedservice_for_dataflow_customer_accountKey')]"
+					},
+					"linkedservice_for_dataflow_products_source_accountKey": {
+						"value": "[parameters('linkedservice_for_dataflow_products_source_accountKey')]"
 					},
 					"linkedservice_for_dataflow_source_sales_accountKey": {
 						"value": "[parameters('linkedservice_for_dataflow_source_sales_accountKey')]"
@@ -233,11 +255,17 @@
 					"github_source_linkedservice_customer_properties_typeProperties_url": {
 						"value": "[parameters('github_source_linkedservice_customer_properties_typeProperties_url')]"
 					},
+					"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
+						"value": "[parameters('linkedservice_after_dataflow_sink_products_properties_typeProperties_url')]"
+					},
 					"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_customer_sink_afterdataflow_properties_typeProperties_url')]"
 					},
 					"linkedservice_for_dataflow_customer_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_for_dataflow_customer_properties_typeProperties_url')]"
+					},
+					"linkedservice_for_dataflow_products_source_properties_typeProperties_url": {
+						"value": "[parameters('linkedservice_for_dataflow_products_source_properties_typeProperties_url')]"
 					},
 					"linkedservice_for_dataflow_source_sales_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_for_dataflow_source_sales_properties_typeProperties_url')]"
