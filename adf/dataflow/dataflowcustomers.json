@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "customersource"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_onprem_sales_source_after_dataflow",
+						"type": "DatasetReference"
+					},
+					"name": "salessource"
 				}
 			],
 			"sinks": [
@@ -19,11 +26,21 @@
 						"type": "DatasetReference"
 					},
 					"name": "Customersink"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_sink_sales_after_dataflow",
+						"type": "DatasetReference"
+					},
+					"name": "salessink"
 				}
 			],
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -37,14 +54,37 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> customersource",
+				"source(output(",
+				"          CustomerID as string,",
+				"          ProductID as string,",
+				"          SaleDate as string,",
+				"          Quantity as string,",
+				"          TotalAmount as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> salessource",
 				"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country))) ~> derivedColumn1",
+				"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
+				"          TotalAmount = round(toFloat(TotalAmount), 3),",
+				"          ProductID = iif(isNull(ProductID) || ProductID == '', toInteger(null()), toInteger(ProductID))\r",
+				"\r",
+				",",
+				"          CustomerID = iif(isNull(CustomerID) || CustomerID == '', toInteger(null()), toInteger(CustomerID))) ~> derivedColumn2",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Customersink"
+				"     skipDuplicateMapOutputs: true) ~> Customersink",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> salessink"
 			]
 		}
 	}
