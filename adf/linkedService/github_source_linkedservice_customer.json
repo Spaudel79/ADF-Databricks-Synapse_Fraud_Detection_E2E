@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "HttpServer",
 		"typeProperties": {
-			"url": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customer_data.csv",
+			"url": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customers_messy.csv",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		}
