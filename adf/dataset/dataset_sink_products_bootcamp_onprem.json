@@ -1,0 +1,23 @@
+{
+	"name": "dataset_sink_products_bootcamp_onprem",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dataset_sink_products_bootcamp_onprem",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "onPrem_sales",
+				"fileSystem": "bootcamp-project-1"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

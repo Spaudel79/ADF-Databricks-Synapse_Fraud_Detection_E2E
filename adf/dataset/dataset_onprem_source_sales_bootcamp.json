@@ -1,0 +1,41 @@
+{
+	"name": "dataset_onprem_source_sales_bootcamp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linkedservice_onprem_source_sales_bootcamp",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ProductID",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SaleDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "Quantity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TotalAmount",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "sales_messy"
+		}
+	}
+}
