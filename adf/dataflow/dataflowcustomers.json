@@ -1,0 +1,30 @@
+{
+	"name": "dataflowcustomers",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dataset_for_dataflow_customer",
+						"type": "DatasetReference"
+					},
+					"name": "customer_source"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as integer,",
+				"          gender as string,",
+				"          age as integer,",
+				"          payment_method as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> customer_source"
+			]
+		}
+	}
+}
