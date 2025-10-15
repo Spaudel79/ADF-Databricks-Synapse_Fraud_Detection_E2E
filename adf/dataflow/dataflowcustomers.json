@@ -43,7 +43,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "dataset_after_dataflow_sink_products",
+						"referenceName": "dataset_for_sink_products_on_azuresql",
 						"type": "DatasetReference"
 					},
 					"name": "productssink"
@@ -112,11 +112,16 @@
 				"     skipDuplicateMapOutputs: true) ~> salessink",
 				"derivedColumn3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> productssink"
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> productssink"
 			]
 		}
 	}
