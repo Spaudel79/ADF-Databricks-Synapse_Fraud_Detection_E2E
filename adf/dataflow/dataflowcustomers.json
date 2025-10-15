@@ -29,14 +29,14 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "dataset_customer_sink_afterdataflow",
+						"referenceName": "dataset_azuresql_sink_customer",
 						"type": "DatasetReference"
 					},
 					"name": "Customersink"
 				},
 				{
 					"dataset": {
-						"referenceName": "dataset_sink_sales_after_dataflow",
+						"referenceName": "dataset_azuresql_sink_sales",
 						"type": "DatasetReference"
 					},
 					"name": "salessink"
@@ -91,8 +91,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> productssource",
 				"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country)),",
-				"          City = iif(isNull(City) || City == '', toString(null()), upper(City)),",
-				"          City = upper(City)) ~> derivedColumn1",
+				"          City = iif(isNull(City) || City == '', toString(null()), upper(City))) ~> derivedColumn1",
 				"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
 				"          TotalAmount = round(toFloat(TotalAmount), 3),",
 				"          ProductID = iif(isNull(ProductID) || ProductID == '', toInteger(null()), toInteger(ProductID)),",
@@ -100,18 +99,28 @@
 				"productssource derive(Category = upper(Category)) ~> derivedColumn3",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Customersink",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> Customersink",
 				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> salessink",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> salessink",
 				"derivedColumn3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",

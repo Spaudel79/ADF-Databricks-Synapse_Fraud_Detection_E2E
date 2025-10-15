@@ -1,0 +1,16 @@
+{
+	"name": "dataset_azuresql_sink_customer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linkedservice_azuresql_sink_customer",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "cleanedcustomers"
+		}
+	}
+}
