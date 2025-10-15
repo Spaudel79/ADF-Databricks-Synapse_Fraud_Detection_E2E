@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "HttpServer",
 		"typeProperties": {
-			"url": "https://www.kaggle.com/datasets/varunkumari/ai-shop-dataset?select=customers_sample.csv",
+			"url": "https://www.kaggle.com/datasets/varunkumari/ai-shop-dataset/customers_sample.csv",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		}
