@@ -1823,6 +1823,12 @@
 						},
 						{
 							"name": "derivedColumn3"
+						},
+						{
+							"name": "window1"
+						},
+						{
+							"name": "rank1"
 						}
 					],
 					"scriptLines": [
@@ -1862,6 +1868,10 @@
 						"          ProductID = iif(isNull(ProductID) || ProductID == '', toInteger(null()), toInteger(ProductID)),",
 						"          CustomerID = iif(isNull(CustomerID) || CustomerID == '', toInteger(null()), toInteger(CustomerID))) ~> derivedColumn2",
 						"productssource derive(Category = upper(Category)) ~> derivedColumn3",
+						"derivedColumn3 window(over(Category),",
+						"     TotalQuantityByCategory = sum(toInteger(StockQuantity))) ~> window1",
+						"derivedColumn2 rank(desc(Quantity, true),",
+						"     output(QuantityRank as long)) ~> rank1",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
@@ -1874,7 +1884,7 @@
 						"     errorHandlingOption: 'stopOnFirstError',",
 						"     preCommands: [],",
 						"     postCommands: []) ~> Customersink",
-						"derivedColumn2 sink(allowSchemaDrift: true,",
+						"rank1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
@@ -1886,7 +1896,7 @@
 						"     errorHandlingOption: 'stopOnFirstError',",
 						"     preCommands: [],",
 						"     postCommands: []) ~> salessink",
-						"derivedColumn3 sink(allowSchemaDrift: true,",
+						"window1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
