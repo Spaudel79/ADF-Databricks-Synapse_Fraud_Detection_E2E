@@ -1,0 +1,16 @@
+{
+	"name": "dataset_for_sink_products_on_azuresql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dataset_for_sink_products_on_azuresql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "cleanproducts"
+		}
+	}
+}
