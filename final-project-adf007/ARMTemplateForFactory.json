@@ -27,6 +27,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_after_dataflow_sink_products'"
 		},
+		"linkedservice_azuresql_sink_customer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'linkedservice_azuresql_sink_customer'"
+		},
+		"linkedservice_azuresql_sink_sales_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'linkedservice_azuresql_sink_sales'"
+		},
 		"linkedservice_customer_sink_afterdataflow_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_customer_sink_afterdataflow'"
@@ -114,6 +122,30 @@
 		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsaap"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsaap"
 		},
 		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 			"type": "string",
@@ -622,6 +654,48 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/source_dataflow_linkedservice')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_azuresql_sink_customer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_azuresql_sink_customer",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "cleanedcustomers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_azuresql_sink_customer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_azuresql_sink_sales')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_azuresql_sink_sales",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "cleanedsales"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_azuresql_sink_sales')]"
 			]
 		},
 		{
@@ -1281,6 +1355,50 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_azuresql_sink_customer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_server')]",
+					"database": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_azuresql_sink_customer_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_azuresql_sink_sales')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_server')]",
+					"database": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_azuresql_sink_sales_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/linkedservice_customer_sink_afterdataflow')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1676,14 +1794,14 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "dataset_customer_sink_afterdataflow",
+								"referenceName": "dataset_azuresql_sink_customer",
 								"type": "DatasetReference"
 							},
 							"name": "Customersink"
 						},
 						{
 							"dataset": {
-								"referenceName": "dataset_sink_sales_after_dataflow",
+								"referenceName": "dataset_azuresql_sink_sales",
 								"type": "DatasetReference"
 							},
 							"name": "salessink"
@@ -1737,7 +1855,8 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> productssource",
-						"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country))) ~> derivedColumn1",
+						"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country)),",
+						"          City = iif(isNull(City) || City == '', toString(null()), upper(City))) ~> derivedColumn1",
 						"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
 						"          TotalAmount = round(toFloat(TotalAmount), 3),",
 						"          ProductID = iif(isNull(ProductID) || ProductID == '', toInteger(null()), toInteger(ProductID)),",
@@ -1745,18 +1864,28 @@
 						"productssource derive(Category = upper(Category)) ~> derivedColumn3",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> Customersink",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     preCommands: [],",
+						"     postCommands: []) ~> Customersink",
 						"derivedColumn2 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> salessink",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     preCommands: [],",
+						"     postCommands: []) ~> salessink",
 						"derivedColumn3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
@@ -1776,8 +1905,8 @@
 				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_customer')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_onprem_sales_source_after_dataflow')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_products_source')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_customer_sink_afterdataflow')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_sink_sales_after_dataflow')]",
+				"[concat(variables('factoryId'), '/datasets/dataset_azuresql_sink_customer')]",
+				"[concat(variables('factoryId'), '/datasets/dataset_azuresql_sink_sales')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_for_sink_products_on_azuresql')]"
 			]
 		}

@@ -20,6 +20,12 @@
 		"linkedservice_after_dataflow_sink_products_accountKey": {
 			"value": ""
 		},
+		"linkedservice_azuresql_sink_customer_password": {
+			"value": ""
+		},
+		"linkedservice_azuresql_sink_sales_password": {
+			"value": ""
+		},
 		"linkedservice_customer_sink_afterdataflow_accountKey": {
 			"value": ""
 		},
@@ -85,6 +91,24 @@
 		},
 		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_server": {
+			"value": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_database": {
+			"value": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_userName": {
+			"value": "adminsaap"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_server": {
+			"value": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_database": {
+			"value": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_userName": {
+			"value": "adminsaap"
 		},
 		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"

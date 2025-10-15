@@ -27,6 +27,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_after_dataflow_sink_products'"
 		},
+		"linkedservice_azuresql_sink_customer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'linkedservice_azuresql_sink_customer'"
+		},
+		"linkedservice_azuresql_sink_sales_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'linkedservice_azuresql_sink_sales'"
+		},
 		"linkedservice_customer_sink_afterdataflow_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_customer_sink_afterdataflow'"
@@ -114,6 +122,30 @@
 		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsaap"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsaap"
 		},
 		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 			"type": "string",
@@ -229,6 +261,12 @@
 					"linkedservice_after_dataflow_sink_products_accountKey": {
 						"value": "[parameters('linkedservice_after_dataflow_sink_products_accountKey')]"
 					},
+					"linkedservice_azuresql_sink_customer_password": {
+						"value": "[parameters('linkedservice_azuresql_sink_customer_password')]"
+					},
+					"linkedservice_azuresql_sink_sales_password": {
+						"value": "[parameters('linkedservice_azuresql_sink_sales_password')]"
+					},
 					"linkedservice_customer_sink_afterdataflow_accountKey": {
 						"value": "[parameters('linkedservice_customer_sink_afterdataflow_accountKey')]"
 					},
@@ -285,6 +323,24 @@
 					},
 					"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_after_dataflow_sink_products_properties_typeProperties_url')]"
+					},
+					"linkedservice_azuresql_sink_customer_properties_typeProperties_server": {
+						"value": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_server')]"
+					},
+					"linkedservice_azuresql_sink_customer_properties_typeProperties_database": {
+						"value": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_database')]"
+					},
+					"linkedservice_azuresql_sink_customer_properties_typeProperties_userName": {
+						"value": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_userName')]"
+					},
+					"linkedservice_azuresql_sink_sales_properties_typeProperties_server": {
+						"value": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_server')]"
+					},
+					"linkedservice_azuresql_sink_sales_properties_typeProperties_database": {
+						"value": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_database')]"
+					},
+					"linkedservice_azuresql_sink_sales_properties_typeProperties_userName": {
+						"value": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_userName')]"
 					},
 					"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 						"value": "[parameters('linkedservice_customer_sink_afterdataflow_properties_typeProperties_url')]"

@@ -27,6 +27,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_after_dataflow_sink_products'"
 		},
+		"linkedservice_azuresql_sink_customer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'linkedservice_azuresql_sink_customer'"
+		},
+		"linkedservice_azuresql_sink_sales_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'linkedservice_azuresql_sink_sales'"
+		},
 		"linkedservice_customer_sink_afterdataflow_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linkedservice_customer_sink_afterdataflow'"
@@ -102,6 +110,30 @@
 		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_customer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsaap"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbasedserver.database.windows.net"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"linkedservice_azuresql_sink_sales_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsaap"
 		},
 		"linkedservice_customer_sink_afterdataflow_properties_typeProperties_url": {
 			"type": "string",
@@ -253,6 +285,50 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('linkedservice_after_dataflow_sink_products_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_azuresql_sink_customer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_server')]",
+					"database": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('linkedservice_azuresql_sink_customer_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_azuresql_sink_customer_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_azuresql_sink_sales')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_server')]",
+					"database": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('linkedservice_azuresql_sink_sales_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_azuresql_sink_sales_password')]"
 					}
 				}
 			},
@@ -454,128 +530,6 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflow_sink_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dataflow_sink_dataset",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "bronze/output",
-						"fileSystem": "final-project-folder"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dataflow_sink_dataset')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflow_source_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "source_dataflow_linkedservice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "dbo.Transcations.txt",
-						"folderPath": "bronze/input",
-						"fileSystem": "final-project-folder"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "TransactionID",
-						"type": "String"
-					},
-					{
-						"name": "AccountID",
-						"type": "String"
-					},
-					{
-						"name": "TransactionAmount",
-						"type": "String"
-					},
-					{
-						"name": "TransactionDate",
-						"type": "String"
-					},
-					{
-						"name": "TransactionType",
-						"type": "String"
-					},
-					{
-						"name": "Location",
-						"type": "String"
-					},
-					{
-						"name": "DeviceID",
-						"type": "String"
-					},
-					{
-						"name": "IP_Address",
-						"type": "String"
-					},
-					{
-						"name": "MerchantID",
-						"type": "String"
-					},
-					{
-						"name": "Channel",
-						"type": "String"
-					},
-					{
-						"name": "CustomerAge",
-						"type": "String"
-					},
-					{
-						"name": "CustomerOccupation",
-						"type": "String"
-					},
-					{
-						"name": "TransactionDuration",
-						"type": "String"
-					},
-					{
-						"name": "LoginAttempts",
-						"type": "String"
-					},
-					{
-						"name": "AccountBalance",
-						"type": "String"
-					},
-					{
-						"name": "PreviousTransactionDate",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/source_dataflow_linkedservice')]"
-			]
 		}
 	]
 }

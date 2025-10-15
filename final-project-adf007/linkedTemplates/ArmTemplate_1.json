@@ -53,6 +53,162 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/dataflow_sink_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dataflow_sink_dataset",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "bronze/output",
+						"fileSystem": "final-project-folder"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow_source_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "source_dataflow_linkedservice",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "dbo.Transcations.txt",
+						"folderPath": "bronze/input",
+						"fileSystem": "final-project-folder"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "TransactionID",
+						"type": "String"
+					},
+					{
+						"name": "AccountID",
+						"type": "String"
+					},
+					{
+						"name": "TransactionAmount",
+						"type": "String"
+					},
+					{
+						"name": "TransactionDate",
+						"type": "String"
+					},
+					{
+						"name": "TransactionType",
+						"type": "String"
+					},
+					{
+						"name": "Location",
+						"type": "String"
+					},
+					{
+						"name": "DeviceID",
+						"type": "String"
+					},
+					{
+						"name": "IP_Address",
+						"type": "String"
+					},
+					{
+						"name": "MerchantID",
+						"type": "String"
+					},
+					{
+						"name": "Channel",
+						"type": "String"
+					},
+					{
+						"name": "CustomerAge",
+						"type": "String"
+					},
+					{
+						"name": "CustomerOccupation",
+						"type": "String"
+					},
+					{
+						"name": "TransactionDuration",
+						"type": "String"
+					},
+					{
+						"name": "LoginAttempts",
+						"type": "String"
+					},
+					{
+						"name": "AccountBalance",
+						"type": "String"
+					},
+					{
+						"name": "PreviousTransactionDate",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_azuresql_sink_customer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_azuresql_sink_customer",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "cleanedcustomers"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_azuresql_sink_sales')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_azuresql_sink_sales",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "cleanedsales"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataset_customer_sink_afterdataflow')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -556,490 +712,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/onprem_adls_source_final_linkedservice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/onprem_sqlserver_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onprem_sqlserver_source_linkedservice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "TransactionID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AccountID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TransactionAmount",
-						"type": "float",
-						"precision": 15
-					},
-					{
-						"name": "TransactionDate",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "TransactionType",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Location",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DeviceID",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "IP_Address",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MerchantID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Channel",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CustomerAge",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "CustomerOccupation",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TransactionDuration",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "LoginAttempts",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "AccountBalance",
-						"type": "float",
-						"precision": 15
-					},
-					{
-						"name": "PreviousTransactionDate",
-						"type": "datetime2",
-						"scale": 7
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Transcations"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onprem_sqlserver_source_linkedservice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Final_dataflow')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "dataflow_source_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "dataflow_sink_dataset",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "aggregate1"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     parameter1 as string",
-						"}",
-						"source(output(",
-						"          TransactionID as string,",
-						"          AccountID as string,",
-						"          TransactionAmount as string,",
-						"          TransactionDate as string,",
-						"          TransactionType as string,",
-						"          Location as string,",
-						"          DeviceID as string,",
-						"          IP_Address as string,",
-						"          MerchantID as string,",
-						"          Channel as string,",
-						"          CustomerAge as string,",
-						"          CustomerOccupation as string,",
-						"          TransactionDuration as string,",
-						"          LoginAttempts as string,",
-						"          AccountBalance as string,",
-						"          PreviousTransactionDate as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> source1",
-						"source1 aggregate(groupBy(TransactionID,",
-						"          AccountID,",
-						"          TransactionAmount,",
-						"          TransactionDate,",
-						"          TransactionType,",
-						"          Location,",
-						"          DeviceID,",
-						"          IP_Address,",
-						"          MerchantID,",
-						"          Channel,",
-						"          CustomerAge,",
-						"          CustomerOccupation,",
-						"          TransactionDuration,",
-						"          LoginAttempts,",
-						"          AccountBalance,",
-						"          PreviousTransactionDate),",
-						"     DuplicateCount = count(1)) ~> aggregate1",
-						"aggregate1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflowcustomers')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "dataset_for_dataflow_customer",
-								"type": "DatasetReference"
-							},
-							"name": "customersource"
-						},
-						{
-							"dataset": {
-								"referenceName": "dataset_onprem_sales_source_after_dataflow",
-								"type": "DatasetReference"
-							},
-							"name": "salessource"
-						},
-						{
-							"dataset": {
-								"referenceName": "dataset_for_dataflow_products_source",
-								"type": "DatasetReference"
-							},
-							"name": "productssource"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "dataset_customer_sink_afterdataflow",
-								"type": "DatasetReference"
-							},
-							"name": "Customersink"
-						},
-						{
-							"dataset": {
-								"referenceName": "dataset_sink_sales_after_dataflow",
-								"type": "DatasetReference"
-							},
-							"name": "salessink"
-						},
-						{
-							"dataset": {
-								"referenceName": "dataset_for_sink_products_on_azuresql",
-								"type": "DatasetReference"
-							},
-							"name": "productssink"
-						}
-					],
-					"transformations": [
-						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "derivedColumn2"
-						},
-						{
-							"name": "derivedColumn3"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          CustomerName as string,",
-						"          Email as string,",
-						"          Phone as string,",
-						"          City as string,",
-						"          Country as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> customersource",
-						"source(output(",
-						"          CustomerID as string,",
-						"          ProductID as string,",
-						"          SaleDate as string,",
-						"          Quantity as string,",
-						"          TotalAmount as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> salessource",
-						"source(output(",
-						"          ProductName as string,",
-						"          Category as string,",
-						"          Price as string,",
-						"          StockQuantity as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> productssource",
-						"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country))) ~> derivedColumn1",
-						"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
-						"          TotalAmount = round(toFloat(TotalAmount), 3),",
-						"          ProductID = iif(isNull(ProductID) || ProductID == '', toInteger(null()), toInteger(ProductID)),",
-						"          CustomerID = iif(isNull(CustomerID) || CustomerID == '', toInteger(null()), toInteger(CustomerID))) ~> derivedColumn2",
-						"productssource derive(Category = upper(Category)) ~> derivedColumn3",
-						"derivedColumn1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> Customersink",
-						"derivedColumn2 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> salessink",
-						"derivedColumn3 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     preCommands: [],",
-						"     postCommands: []) ~> productssink"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_customer')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_onprem_sales_source_after_dataflow')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_products_source')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_customer_sink_afterdataflow')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_sink_sales_after_dataflow')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_for_sink_products_on_azuresql')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Bootcamp1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "GIthubCopy",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "HttpReadSettings",
-									"requestMethod": "GET"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "dataset_source_github",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "dataset_sink_csv_from_github",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "OnPremCopy",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "dataset_onprem_source_sales_bootcamp",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "dataset_sink_products_bootcamp_onprem",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Data flow for Customers",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "dataflowcustomers",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"customersource": {},
-									"salessource": {},
-									"productssource": {},
-									"Customersink": {},
-									"salessink": {},
-									"productssink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dataset_source_github')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_sink_csv_from_github')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_onprem_source_sales_bootcamp')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_sink_products_bootcamp_onprem')]",
-				"[concat(variables('factoryId'), '/dataflows/dataflowcustomers')]"
 			]
 		}
 	]
