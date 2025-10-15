@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'dataflow_sink_dataset'"
 		},
+		"dataset_for_sink_products_on_azuresql_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'dataset_for_sink_products_on_azuresql'"
+		},
 		"dataset_sink_products_bootcamp_onprem_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'dataset_sink_products_bootcamp_onprem'"
@@ -86,6 +90,18 @@
 		"dataflow_sink_dataset_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"dataset_for_sink_products_on_azuresql_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbasedserver.database.windows.net"
+		},
+		"dataset_for_sink_products_on_azuresql_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"dataset_for_sink_products_on_azuresql_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsaap"
 		},
 		"dataset_sink_products_bootcamp_onprem_properties_typeProperties_url": {
 			"type": "string",
@@ -204,6 +220,9 @@
 					"dataflow_sink_dataset_accountKey": {
 						"value": "[parameters('dataflow_sink_dataset_accountKey')]"
 					},
+					"dataset_for_sink_products_on_azuresql_password": {
+						"value": "[parameters('dataset_for_sink_products_on_azuresql_password')]"
+					},
 					"dataset_sink_products_bootcamp_onprem_accountKey": {
 						"value": "[parameters('dataset_sink_products_bootcamp_onprem_accountKey')]"
 					},
@@ -248,6 +267,15 @@
 					},
 					"dataflow_sink_dataset_properties_typeProperties_url": {
 						"value": "[parameters('dataflow_sink_dataset_properties_typeProperties_url')]"
+					},
+					"dataset_for_sink_products_on_azuresql_properties_typeProperties_server": {
+						"value": "[parameters('dataset_for_sink_products_on_azuresql_properties_typeProperties_server')]"
+					},
+					"dataset_for_sink_products_on_azuresql_properties_typeProperties_database": {
+						"value": "[parameters('dataset_for_sink_products_on_azuresql_properties_typeProperties_database')]"
+					},
+					"dataset_for_sink_products_on_azuresql_properties_typeProperties_userName": {
+						"value": "[parameters('dataset_for_sink_products_on_azuresql_properties_typeProperties_userName')]"
 					},
 					"dataset_sink_products_bootcamp_onprem_properties_typeProperties_url": {
 						"value": "[parameters('dataset_sink_products_bootcamp_onprem_properties_typeProperties_url')]"
@@ -343,6 +371,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'final-project-adf007_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "final-project-adf007_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'final-project-adf007_ArmTemplate_1')]"
 			]
 		}
 	]

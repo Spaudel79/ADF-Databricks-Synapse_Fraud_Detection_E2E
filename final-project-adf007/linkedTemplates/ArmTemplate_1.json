@@ -219,6 +219,25 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dataset_for_sink_products_on_azuresql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dataset_for_sink_products_on_azuresql",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "cleanproducts"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataset_onprem_sales_source_after_dataflow')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -765,7 +784,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "dataset_after_dataflow_sink_products",
+								"referenceName": "dataset_for_sink_products_on_azuresql",
 								"type": "DatasetReference"
 							},
 							"name": "productssink"
@@ -834,11 +853,16 @@
 						"     skipDuplicateMapOutputs: true) ~> salessink",
 						"derivedColumn3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> productssink"
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     preCommands: [],",
+						"     postCommands: []) ~> productssink"
 					]
 				}
 			},
@@ -847,7 +871,8 @@
 				"[concat(variables('factoryId'), '/datasets/dataset_onprem_sales_source_after_dataflow')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_for_dataflow_products_source')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_customer_sink_afterdataflow')]",
-				"[concat(variables('factoryId'), '/datasets/dataset_sink_sales_after_dataflow')]"
+				"[concat(variables('factoryId'), '/datasets/dataset_sink_sales_after_dataflow')]",
+				"[concat(variables('factoryId'), '/datasets/dataset_for_sink_products_on_azuresql')]"
 			]
 		},
 		{
@@ -1015,148 +1040,6 @@
 				"[concat(variables('factoryId'), '/datasets/dataset_onprem_source_sales_bootcamp')]",
 				"[concat(variables('factoryId'), '/datasets/dataset_sink_products_bootcamp_onprem')]",
 				"[concat(variables('factoryId'), '/dataflows/dataflowcustomers')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/final_pipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "onprem_sqlserver_dataset",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "sink_adls_bronze_dataset",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Copy data1",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Final_dataflow",
-								"type": "DataFlowReference",
-								"parameters": {
-									"parameter1": {
-										"value": "'@{activity('Copy data1').output}'",
-										"type": "Expression"
-									}
-								},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Notebook1",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "Data flow1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Repos/saritaadhikaripaudel@gmail.com/New EndtoEnd Project/Final Notebook 2025-09-28 22:36:51"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2025-09-28T08:45:39Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/onprem_sqlserver_dataset')]",
-				"[concat(variables('factoryId'), '/datasets/sink_adls_bronze_dataset')]",
-				"[concat(variables('factoryId'), '/dataflows/Final_dataflow')]"
 			]
 		}
 	]

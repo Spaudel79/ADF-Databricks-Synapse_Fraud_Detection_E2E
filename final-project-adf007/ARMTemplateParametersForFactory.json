@@ -11,6 +11,9 @@
 		"dataflow_sink_dataset_accountKey": {
 			"value": ""
 		},
+		"dataset_for_sink_products_on_azuresql_password": {
+			"value": ""
+		},
 		"dataset_sink_products_bootcamp_onprem_accountKey": {
 			"value": ""
 		},
@@ -64,6 +67,15 @@
 		},
 		"dataflow_sink_dataset_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"dataset_for_sink_products_on_azuresql_properties_typeProperties_server": {
+			"value": "sqlbasedserver.database.windows.net"
+		},
+		"dataset_for_sink_products_on_azuresql_properties_typeProperties_database": {
+			"value": "bootcamp"
+		},
+		"dataset_for_sink_products_on_azuresql_properties_typeProperties_userName": {
+			"value": "adminsaap"
 		},
 		"dataset_sink_products_bootcamp_onprem_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
