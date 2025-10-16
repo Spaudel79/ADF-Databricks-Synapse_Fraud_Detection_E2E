@@ -1,0 +1,12 @@
+{
+	"name": "dataset_restapi_customer_source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linkedservice_restapi_customer_source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}

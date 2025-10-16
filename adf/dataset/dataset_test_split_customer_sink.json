@@ -1,8 +1,8 @@
 {
-	"name": "dataset_sink_csv_from_github",
+	"name": "dataset_test_split_customer_sink",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "linkedservice_sink_csv_from_github",
+			"referenceName": "linkedservice_test_split_customer_sink",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "customer_raw.csv",
-				"folderPath": "github_customer",
+				"fileName": "sales_raw_data.txt",
 				"fileSystem": "bootcamp-project-1"
 			},
 			"columnDelimiter": ",",

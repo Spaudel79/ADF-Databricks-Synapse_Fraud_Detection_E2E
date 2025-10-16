@@ -24,6 +24,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "productssource"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_restapi_customer_source",
+						"type": "DatasetReference"
+					},
+					"name": "salesJsonSplitSource"
 				}
 			],
 			"sinks": [
@@ -36,17 +43,17 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "dataset_azuresql_sink_sales",
-						"type": "DatasetReference"
-					},
-					"name": "salessink"
-				},
-				{
-					"dataset": {
 						"referenceName": "dataset_for_sink_products_on_azuresql",
 						"type": "DatasetReference"
 					},
 					"name": "productssink"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_azuresql_sink_sales",
+						"type": "DatasetReference"
+					},
+					"name": "newsalessink"
 				}
 			],
 			"transformations": [
@@ -96,6 +103,12 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> productssource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     httpMethod: 'GET',",
+				"     timeout: 30,",
+				"     paginationRules: ['supportRFC5988' -> 'true'],",
+				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'arrayOfDocuments']) ~> salesJsonSplitSource",
 				"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country)),",
 				"          City = iif(isNull(City) || City == '', toString(null()), upper(City))) ~> derivedColumn1",
 				"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
@@ -119,18 +132,6 @@
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     preCommands: [],",
 				"     postCommands: []) ~> Customersink",
-				"rank1 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError',",
-				"     preCommands: [],",
-				"     postCommands: []) ~> salessink",
 				"window1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
@@ -142,7 +143,17 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     preCommands: [],",
-				"     postCommands: []) ~> productssink"
+				"     postCommands: []) ~> productssink",
+				"rank1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> newsalessink"
 			]
 		}
 	}

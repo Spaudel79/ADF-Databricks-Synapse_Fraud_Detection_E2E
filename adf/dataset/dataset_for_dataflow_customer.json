@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "49e24539-2bd1-4abc-8279-e7c7214e32f2",
+				"fileName": "customer_raw.csv",
 				"folderPath": "github_customer",
 				"fileSystem": "bootcamp-project-1"
 			},
