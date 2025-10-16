@@ -6,12 +6,223 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "final-project-adf007"
+		},
+		"linkedservice_onprem_source_sales_bootcamp_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'linkedservice_onprem_source_sales_bootcamp'"
+		},
+		"onprem_adls_source_final_linkedservice_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'onprem_adls_source_final_linkedservice'"
+		},
+		"onprem_sqlserver_source_linkedservice_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'onprem_sqlserver_source_linkedservice'"
+		},
+		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "DESKTOP-UHTBC01"
+		},
+		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "bootcamp"
+		},
+		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "newsqlserver"
+		},
+		"onprem_adls_source_final_linkedservice_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"onprem_sqlserver_source_linkedservice_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "DESKTOP-UHTBC01"
+		},
+		"onprem_sqlserver_source_linkedservice_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "customer"
+		},
+		"onprem_sqlserver_source_linkedservice_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "newsqlserver"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/sink_adls_bronze_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sink_adls_bronze_linkedservice",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "bronze",
+						"fileSystem": "final-project-folder"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedservice_onprem_source_sales_bootcamp')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server')]",
+					"database": "[parameters('linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('linkedservice_onprem_source_sales_bootcamp_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "selfhostedintegrationRuntime1",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/onprem_adls_source_final_linkedservice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('onprem_adls_source_final_linkedservice_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('onprem_adls_source_final_linkedservice_accountKey')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "selfhostedintegrationRuntime1",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/onprem_sqlserver_source_linkedservice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('onprem_sqlserver_source_linkedservice_properties_typeProperties_server')]",
+					"database": "[parameters('onprem_sqlserver_source_linkedservice_properties_typeProperties_database')]",
+					"encrypt": "optional",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('onprem_sqlserver_source_linkedservice_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('onprem_sqlserver_source_linkedservice_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "selfhostedintegrationRuntime1",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_onprem_source_sales_bootcamp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_onprem_source_sales_bootcamp",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "ProductID",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "SaleDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "Quantity",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TotalAmount",
+						"type": "float",
+						"precision": 15
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "sales_messy"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_onprem_source_sales_bootcamp')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/onprem_adls_source_final_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onprem_adls_source_final_linkedservice",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onprem_adls_source_final_linkedservice')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/onprem_sqlserver_dataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -103,7 +314,9 @@
 					"table": "Transcations"
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onprem_sqlserver_source_linkedservice')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Final_dataflow')]",
@@ -217,6 +430,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "productssource"
+						},
+						{
+							"dataset": {
+								"referenceName": "dataset_restapi_customer_source",
+								"type": "DatasetReference"
+							},
+							"name": "salesJsonSplitSource"
 						}
 					],
 					"sinks": [
@@ -229,17 +449,17 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "dataset_azuresql_sink_sales",
-								"type": "DatasetReference"
-							},
-							"name": "salessink"
-						},
-						{
-							"dataset": {
 								"referenceName": "dataset_for_sink_products_on_azuresql",
 								"type": "DatasetReference"
 							},
 							"name": "productssink"
+						},
+						{
+							"dataset": {
+								"referenceName": "dataset_azuresql_sink_sales",
+								"type": "DatasetReference"
+							},
+							"name": "newsalessink"
 						}
 					],
 					"transformations": [
@@ -289,6 +509,13 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> productssource",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     httpMethod: 'GET',",
+						"     timeout: 30,",
+						"     requestInterval: 0,",
+						"     paginationRules: ['supportRFC5988' -> 'true'],",
+						"     responseFormat: ['type' -> 'json', 'documentForm' -> 'arrayOfDocuments']) ~> salesJsonSplitSource",
 						"customersource derive(Country = iif(isNull(Country) || Country == '', toString(null()), upper(Country)),",
 						"          City = iif(isNull(City) || City == '', toString(null()), upper(City))) ~> derivedColumn1",
 						"salessource derive(SaleDate = toString(toDate(SaleDate, 'M/d/yyyy'), 'yyyy-MM-dd'),",
@@ -312,18 +539,6 @@
 						"     errorHandlingOption: 'stopOnFirstError',",
 						"     preCommands: [],",
 						"     postCommands: []) ~> Customersink",
-						"rank1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     preCommands: [],",
-						"     postCommands: []) ~> salessink",
 						"window1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
@@ -335,7 +550,17 @@
 						"     skipDuplicateMapOutputs: true,",
 						"     errorHandlingOption: 'stopOnFirstError',",
 						"     preCommands: [],",
-						"     postCommands: []) ~> productssink"
+						"     postCommands: []) ~> productssink",
+						"rank1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> newsalessink"
 					]
 				}
 			},
@@ -350,6 +575,8 @@
 					{
 						"name": "GIthubCopy",
 						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -409,6 +636,8 @@
 					{
 						"name": "OnPremCopy",
 						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -461,7 +690,7 @@
 						]
 					},
 					{
-						"name": "Data flow for Customers",
+						"name": "Data flow",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -481,9 +710,10 @@
 									"customersource": {},
 									"salessource": {},
 									"productssource": {},
+									"salesJsonSplitSource": {},
 									"Customersink": {},
-									"salessink": {},
-									"productssink": {}
+									"productssink": {},
+									"newsalessink": {}
 								}
 							},
 							"staging": {},
@@ -493,6 +723,69 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "Copy data Split Test Customer",
+						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['Column_1']"
+										},
+										"sink": {}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "dataset_restapi_customer_source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dataset_test_split_customer_sink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -501,6 +794,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/dataset_onprem_source_sales_bootcamp')]",
 				"[concat(variables('factoryId'), '/dataflows/dataflowcustomers')]"
 			]
 		},
@@ -642,6 +936,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/onprem_sqlserver_dataset')]",
+				"[concat(variables('factoryId'), '/datasets/sink_adls_bronze_dataset')]",
 				"[concat(variables('factoryId'), '/dataflows/Final_dataflow')]"
 			]
 		}

@@ -53,6 +53,9 @@
 		"linkedservice_sink_sales_after_dataflow_accountKey": {
 			"value": ""
 		},
+		"linkedservice_test_split_customer_sink_accountKey": {
+			"value": ""
+		},
 		"onprem_adls_source_final_linkedservice_accountKey": {
 			"value": ""
 		},
@@ -87,7 +90,7 @@
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"github_source_linkedservice_customer_properties_typeProperties_url": {
-			"value": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customers_messy.csv"
+			"value": "https://raw.githubusercontent.com/Spaudel79/Datasets-Repository/refs/heads/main/customers_messy_New.csv"
 		},
 		"linkedservice_after_dataflow_sink_products_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
@@ -134,6 +137,9 @@
 		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_userName": {
 			"value": "newsqlserver"
 		},
+		"linkedservice_restapi_customer_source_properties_typeProperties_url": {
+			"value": "https://storage.googleapis.com/kagglesdsdata/datasets/6838784/10999635/sales_sample.json?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=gcp-kaggle-com%40kaggle-161607.iam.gserviceaccount.com%2F20251016%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20251016T053107Z&X-Goog-Expires=259200&X-Goog-SignedHeaders=host&X-Goog-Signature=7837f36c44ae0d8770849cc0f87b8dd87b43a5d3ff4389151222f631b402c09f5a6fa5d3cf3cb24c7e855732104db92c67a0cc3cb7690cc8f8f8149a8bc487e96838b85cf6dc17731b072331abe0fc8f5956ee4367cb9c1f44c8c5354013cee25479bcb9bcce5b2978048f34bb8415b0d920cc4fbb2da7e0d24f024a545066fa72365c35addbf0d101d886734919705208ca8c5b46cc7475db1037d2e6c6a90636b78079daf7d0ac32831c10182b8091137da72c372640f9da2f57d5152e9d0b8828d3c9927469e0e578025111542c437e10eee6dc7b6f0bec2053ef2b0080e2b11c679fa664290a62e8e69f2d42fa446aa204b2afccbb9c47c7b3d26872b741"
+		},
 		"linkedservice_sink_csv_from_github_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
@@ -141,6 +147,12 @@
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"linkedservice_sink_sales_after_dataflow_properties_typeProperties_url": {
+			"value": "https://sepstoragegenz.dfs.core.windows.net/"
+		},
+		"linkedservice_test_split_customer_properties_typeProperties_url": {
+			"value": "https://www.kaggle.com/datasets/varunkumari/ai-shop-dataset/customers_sample.csv"
+		},
+		"linkedservice_test_split_customer_sink_properties_typeProperties_url": {
 			"value": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
 		"onprem_adls_source_final_linkedservice_properties_typeProperties_url": {

@@ -7,51 +7,71 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "final-project-adf007"
 		},
-		"linkedservice_onprem_source_sales_bootcamp_password": {
+		"sink_dataflow_linkeservice_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'linkedservice_onprem_source_sales_bootcamp'"
+			"metadata": "Secure string for 'accountKey' of 'sink_dataflow_linkeservice'"
 		},
-		"onprem_adls_source_final_linkedservice_accountKey": {
+		"source_dataflow_linkedservice_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'onprem_adls_source_final_linkedservice'"
+			"metadata": "Secure string for 'accountKey' of 'source_dataflow_linkedservice'"
 		},
-		"onprem_sqlserver_source_linkedservice_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'onprem_sqlserver_source_linkedservice'"
-		},
-		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "DESKTOP-UHTBC01"
-		},
-		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "bootcamp"
-		},
-		"linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "newsqlserver"
-		},
-		"onprem_adls_source_final_linkedservice_properties_typeProperties_url": {
+		"sink_dataflow_linkeservice_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		},
-		"onprem_sqlserver_source_linkedservice_properties_typeProperties_server": {
+		"source_dataflow_linkedservice_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "DESKTOP-UHTBC01"
-		},
-		"onprem_sqlserver_source_linkedservice_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "customer"
-		},
-		"onprem_sqlserver_source_linkedservice_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "newsqlserver"
+			"defaultValue": "https://sepstoragegenz.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/sink_dataflow_linkeservice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('sink_dataflow_linkeservice_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('sink_dataflow_linkeservice_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/source_dataflow_linkedservice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('source_dataflow_linkedservice_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('source_dataflow_linkedservice_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/selfhostedintegrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dataflow_sink_dataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -168,7 +188,9 @@
 					}
 				]
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/source_dataflow_linkedservice')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dataset_azuresql_sink_customer')]",
@@ -248,7 +270,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "49e24539-2bd1-4abc-8279-e7c7214e32f2",
+						"fileName": "customer_raw.csv",
 						"folderPath": "github_customer",
 						"fileSystem": "bootcamp-project-1"
 					},
@@ -442,6 +464,22 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dataset_restapi_customer_source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_restapi_customer_source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataset_sink_csv_from_github')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -455,6 +493,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "customer_raw.csv",
 						"folderPath": "github_customer",
 						"fileSystem": "bootcamp-project-1"
 					},
@@ -539,17 +578,70 @@
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
+				"schema": [
+					{
+						"name": "CustomerName",
+						"type": "String"
+					},
+					{
+						"name": "Email",
+						"type": "String"
+					},
+					{
+						"name": "Phone",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "Prop_5",
+						"type": "String"
+					},
+					{
+						"name": "CustomerID",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_test_split_customer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_test_split_customer",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
 				"schema": []
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/sink_adls_bronze_dataset')]",
+			"name": "[concat(parameters('factoryName'), '/dataset_test_split_customer_sink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "sink_adls_bronze_linkedservice",
+					"referenceName": "linkedservice_test_split_customer_sink",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -557,8 +649,8 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "bronze",
-						"fileSystem": "final-project-folder"
+						"fileName": "sales_raw_data.txt",
+						"fileSystem": "bootcamp-project-1"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -568,151 +660,6 @@
 				"schema": []
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/linkedservice_onprem_source_sales_bootcamp')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"server": "[parameters('linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_server')]",
-					"database": "[parameters('linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_database')]",
-					"encrypt": "mandatory",
-					"trustServerCertificate": true,
-					"authenticationType": "SQL",
-					"userName": "[parameters('linkedservice_onprem_source_sales_bootcamp_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('linkedservice_onprem_source_sales_bootcamp_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "selfhostedintegrationRuntime1",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/onprem_adls_source_final_linkedservice')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('onprem_adls_source_final_linkedservice_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('onprem_adls_source_final_linkedservice_accountKey')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "selfhostedintegrationRuntime1",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/onprem_sqlserver_source_linkedservice')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"server": "[parameters('onprem_sqlserver_source_linkedservice_properties_typeProperties_server')]",
-					"database": "[parameters('onprem_sqlserver_source_linkedservice_properties_typeProperties_database')]",
-					"encrypt": "optional",
-					"trustServerCertificate": true,
-					"authenticationType": "SQL",
-					"userName": "[parameters('onprem_sqlserver_source_linkedservice_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('onprem_sqlserver_source_linkedservice_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "selfhostedintegrationRuntime1",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataset_onprem_source_sales_bootcamp')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "linkedservice_onprem_source_sales_bootcamp",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "CustomerID",
-						"type": "float",
-						"precision": 15
-					},
-					{
-						"name": "ProductID",
-						"type": "float",
-						"precision": 15
-					},
-					{
-						"name": "SaleDate",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "Quantity",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TotalAmount",
-						"type": "float",
-						"precision": 15
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "sales_messy"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_onprem_source_sales_bootcamp')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/onprem_adls_source_final_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onprem_adls_source_final_linkedservice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onprem_adls_source_final_linkedservice')]"
-			]
 		}
 	]
 }
