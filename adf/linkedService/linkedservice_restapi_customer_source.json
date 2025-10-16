@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://www.kaggle.com/datasets/varunkumari/ai-shop-dataset?select=customers_sample.csv",
+			"url": "https://storage.googleapis.com/kagglesdsdata/datasets/6838784/10999635/sales_sample.json?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=gcp-kaggle-com%40kaggle-161607.iam.gserviceaccount.com%2F20251014%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20251014T160411Z&X-Goog-Expires=259200&X-Goog-SignedHeaders=host&X-Goog-Signature=309cbcb7789e5faea5d2dcd5601adb54248a3e8f3517331b776a7c911a45b32a9ec66a1e82687199c52e77d33bb29fa0a90be6dc31c0b72a5010fbf3264cde131f6133e66f5a0661aed8074e0a1deca450b060f473126f129e1a15e7240642a7931c6e484abcd5a9a5642e61097640e9d5927e6a61eaf73da3b61ce0440b3c63f099e0b833417e9d6e36e7470f3568f29674feb0c61745ed25eb7ceff688034c083c72a5bf7cd690e91c758e413973c8322ca620db949cc3d18a60899f6fcd21671eb771be851b8bf5c989a1a4a5fdff1b7150a6d9aed67adcf4b83365273f039f58ecb56f51ffe886e45aa14a58f2e3853fe3bd205cc1395b594c5b4de7e670",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		}
