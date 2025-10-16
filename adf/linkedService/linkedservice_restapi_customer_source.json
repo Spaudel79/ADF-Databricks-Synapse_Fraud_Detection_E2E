@@ -1,0 +1,12 @@
+{
+	"name": "linkedservice_restapi_customer_source",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://www.kaggle.com/datasets/varunkumari/ai-shop-dataset?select=customers_sample.csv",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
